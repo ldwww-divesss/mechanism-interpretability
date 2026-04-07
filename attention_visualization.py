@@ -16,7 +16,7 @@ import numpy as np
 from transformers import BertTokenizer, BertModel, BertForSequenceClassification
 
 # ─── 0. 加载已训练的模型 ──────────────────────────────────────────────────────────
-MODEL_DIR = "./bert_imdb_model"
+MODEL_DIR = "/home/user/mechanism-interpretability/bert_imdb_model"
 tokenizer = BertTokenizer.from_pretrained(MODEL_DIR)
 
 # BertForSequenceClassification：用于推理预测标签

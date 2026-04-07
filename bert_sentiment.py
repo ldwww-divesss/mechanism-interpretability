@@ -14,17 +14,18 @@ import pandas as pd
 import numpy as np
 import torch
 from torch.utils.data import Dataset, DataLoader
-from transformers import BertTokenizer, BertForSequenceClassification, AdamW, get_linear_schedule_with_warmup
+from transformers import BertTokenizer, BertForSequenceClassification, get_linear_schedule_with_warmup
+from torch.optim import AdamW
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score, classification_report
 import re
 
 # ─── 0. 配置 ───────────────────────────────────────────────────────────────────
 DEVICE     = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-MODEL_NAME = "bert-base-uncased"
-MAX_LEN    = 256   # BERT 最大 512，256 在速度和效果间平衡
-BATCH_SIZE = 16
-EPOCHS     = 3
+MODEL_NAME = "/home/user/tiny_bert"   # 本地小模型（CPU 演示用）；替换为 "bert-base-uncased" 可用完整模型
+MAX_LEN    = 64    # 演示缩短（完整训练建议 256）
+BATCH_SIZE = 8
+EPOCHS     = 1     # 演示 1 轮（完整训练建议 3）
 LR         = 2e-5
 
 print(f"Using device: {DEVICE}")
@@ -36,7 +37,7 @@ def clean_text(text):
     text = re.sub(r"\s+", " ", text).strip()
     return text
 
-df = pd.read_csv("labeledTrainData.tsv", sep="\t", quoting=3)
+df = pd.read_csv("/home/user/mechanism-interpretability/labeledTrainData.tsv", sep="\t", quoting=3)
 df["review"] = df["review"].apply(clean_text)
 
 # 划分训练集 / 验证集（80/20）
@@ -133,6 +134,6 @@ for epoch in range(EPOCHS):
     print(report)
 
 # ─── 6. 保存模型 ─────────────────────────────────────────────────────────────────
-model.save_pretrained("./bert_imdb_model")
-tokenizer.save_pretrained("./bert_imdb_model")
+model.save_pretrained("/home/user/mechanism-interpretability/bert_imdb_model")
+tokenizer.save_pretrained("/home/user/mechanism-interpretability/bert_imdb_model")
 print("\n模型已保存到 ./bert_imdb_model")
