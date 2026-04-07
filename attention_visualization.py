@@ -11,8 +11,17 @@ BERT Attention 可视化 —— 连接「文本分类」与「可解释性」
 import torch
 import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
+import matplotlib.font_manager as fm
 import seaborn as sns
 import numpy as np
+
+# 解决中文字体缺失问题：自动查找系统可用的 CJK 字体
+_cjk_candidates = ["WenQuanYi Zen Hei", "Noto Sans CJK SC", "SimHei", "PingFang SC", "Microsoft YaHei", "Source Han Sans CN"]
+_available = {f.name for f in fm.fontManager.ttflist}
+_cjk_font = next((f for f in _cjk_candidates if f in _available), None)
+if _cjk_font:
+    plt.rcParams["font.sans-serif"] = [_cjk_font] + plt.rcParams["font.sans-serif"]
+    plt.rcParams["axes.unicode_minus"] = False
 from transformers import BertTokenizer, BertModel, BertForSequenceClassification
 
 # ─── 0. 加载已训练的模型 ──────────────────────────────────────────────────────────
@@ -151,7 +160,7 @@ def plot_attention_evolution(tokens, attentions, real_len, head=0):
     print(f"已保存：{fname}")
 
 # ─── 6. 主流程：跑三个样本 ───────────────────────────────────────────────────────────
-label_map = {0: "negative ❌", 1: "positive ✅"}
+label_map = {0: "negative", 1: "positive"}
 
 for i, text in enumerate(samples):
     print(f"\n{'='*60}")
